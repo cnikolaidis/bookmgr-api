@@ -87,7 +87,7 @@ public class BookService {
 	private BookDto saveBook(BookDto dto) throws BusinessLayerException {
 		List<String> validationErrors = validator.validate(dto).stream().map(ConstraintViolation::getMessage).toList();
 		if (!validationErrors.isEmpty()) {
-			throw new BusinessLayerException(String.join(",", validationErrors));
+			throw new BusinessLayerException(String.join(",\n", validationErrors));
 		}
 		Book dbEntity = repository.findById(dto.getIsbn()).orElse(new Book());
 		dbEntity.setIsbn(dto.getIsbn());

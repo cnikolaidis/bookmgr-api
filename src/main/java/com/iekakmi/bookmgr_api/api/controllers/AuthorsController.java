@@ -1,11 +1,11 @@
 package com.iekakmi.bookmgr_api.api.controllers;
 
-import com.iekakmi.bookmgr_api.business.exceptions.BusinessLayerException;
 import com.iekakmi.bookmgr_api.business.services.AuthorService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.iekakmi.bookmgr_api.business.dtos.*;
 import java.util.List;
+import java.net.URI;
 
 @RestController
 @RequestMapping("authors")
@@ -18,85 +18,46 @@ public class AuthorsController {
 
 	@GetMapping
 	public ResponseEntity<?> get() {
-		try {
-			List<AuthorDto> result = svc.getAuthors();
-			return ResponseEntity
-					.ok(result);
-		}
-		catch (Exception x) {
-			return ResponseEntity
-					.internalServerError()
-					.body(x);
-		}
+		List<AuthorDto> result = svc.getAuthors();
+		return ResponseEntity
+				.ok(result);
 	}
 	
 	@GetMapping("{id}")
 	public ResponseEntity<?> getById(@PathVariable("id") int id) {
-		try {
-			AuthorDto result = svc.getAuthorById(id);
-			return ResponseEntity
-					.ok(result);
-		}
-		catch (Exception x) {
-			return ResponseEntity
-					.internalServerError()
-					.body(x);
-		}
+		AuthorDto result = svc.getAuthorById(id);
+		return ResponseEntity
+				.ok(result);
 	}
 	
 	@GetMapping("{id}/books")
 	public ResponseEntity<?> getBooksByAuthor(@PathVariable("id") int id) {
-		try {
-			List<BookDto> result = svc.getBooksByAuthorId(id);
-			return ResponseEntity
-					.ok(result);
-		}
-		catch (Exception x) {
-			return ResponseEntity
-					.internalServerError()
-					.body(x);
-		}
+		List<BookDto> result = svc.getBooksByAuthorId(id);
+		return ResponseEntity
+				.ok(result);
 	}
 	
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody AuthorDto dto) {
-		try {
-			AuthorDto result = svc.createAuthor(dto);
-			return ResponseEntity
-					.ok(result);
-		}
-		catch (BusinessLayerException blx) {
-			return ResponseEntity
-					.internalServerError()
-					.body(blx);
-		}
+		AuthorDto result = svc.createAuthor(dto);
+		return ResponseEntity
+				.created(URI.create("/authors"))
+				.body(result);
 	}
 	
 	@PutMapping
 	public ResponseEntity<?> update(@RequestBody AuthorDto dto) {
-		try {
-			AuthorDto result = svc.updateAuthor(dto);
-			return ResponseEntity
-					.ok(result);
-		}
-		catch (BusinessLayerException blx) {
-			return ResponseEntity
-					.internalServerError()
-					.body(blx);
-		}
+		AuthorDto result = svc.updateAuthor(dto);
+		return ResponseEntity
+				.accepted()
+				.body(result);
 	}
 	
 	@DeleteMapping("{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id) {
-		try {
-			svc.deleteAuthor(id);
-			return ResponseEntity
-					.ok(id);
-		}
-		catch (BusinessLayerException blx) {
-			return ResponseEntity
-					.internalServerError()
-					.body(blx);
-		}
+		svc.deleteAuthor(id);
+		return ResponseEntity
+				.noContent()
+				.build();
 	}
 }

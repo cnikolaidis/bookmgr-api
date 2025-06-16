@@ -44,7 +44,7 @@ public class AuthorService {
 	public AuthorDto createAuthor(AuthorDto dto) throws BusinessLayerException {
 		List<String> validationErrors = validator.validate(dto).stream().map(ConstraintViolation::getMessage).toList();
 		if (!validationErrors.isEmpty()) {
-			throw new BusinessLayerException(String.join(",", validationErrors));
+			throw new BusinessLayerException(String.join(",\n", validationErrors));
 		}
 		Author dbEntity = repository.findById(dto.getId()).orElse(new Author());
 		dbEntity.setName(dto.getName());

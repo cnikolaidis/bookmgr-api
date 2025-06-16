@@ -4,9 +4,15 @@ import com.iekakmi.bookmgr_api.domain.entities.Author;
 import com.iekakmi.bookmgr_api.domain.entities.Book;
 import jakarta.validation.constraints.*;
 import java.util.stream.Collectors;
+import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
 import java.util.Set;
 
+@Setter
+@Getter
+@NoArgsConstructor
 public class AuthorDto {
 	private int id;
     
@@ -22,53 +28,11 @@ public class AuthorDto {
 
     private Set<String> bookIsbns;
 
-    public AuthorDto() {}
-
     public AuthorDto(Author entity) {
     	setId(entity.getId());
     	setName(entity.getName());
     	setNationality(entity.getNationality());
     	setDateOfBirth(entity.getDateOfBirth());
     	setBookIsbns(entity.getBooks().stream().map(Book::getIsbn).collect(Collectors.toSet()));
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public Set<String> getBookIsbns() {
-        return bookIsbns;
-    }
-
-    public void setBookIsbns(Set<String> bookIsbns) {
-        this.bookIsbns = bookIsbns;
     }
 }

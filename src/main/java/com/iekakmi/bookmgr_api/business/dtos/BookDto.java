@@ -3,8 +3,14 @@ package com.iekakmi.bookmgr_api.business.dtos;
 import com.iekakmi.bookmgr_api.domain.entities.Book;
 import jakarta.validation.constraints.*;
 import java.util.stream.Collectors;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import java.util.Set;
 
+@Setter
+@Getter
+@NoArgsConstructor
 public class BookDto {
 	
 	@NotBlank(message = "ISBN is mandatory")
@@ -25,61 +31,11 @@ public class BookDto {
 
     private Set<Integer> authorIds;
 
-    public BookDto() {}
-
     public BookDto(Book entity) {
     	setIsbn(entity.getIsbn());
     	setTitle(entity.getTitle());
     	setCategory(entity.getCategory());
     	setPublicationYear(entity.getPublicationYear());
     	setAuthors(entity.getAuthors().stream().map(AuthorDto::new).collect(Collectors.toSet()));
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public Integer getPublicationYear() {
-        return publicationYear;
-    }
-
-    public void setPublicationYear(Integer publicationYear) {
-        this.publicationYear = publicationYear;
-    }
-
-    public Set<AuthorDto> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(Set<AuthorDto> authors) {
-        this.authors = authors;
-    }
-    
-    public Set<Integer> getAuthorIds() {
-        return authorIds;
-    }
-
-    public void setAuthorIds(Set<Integer> authorIds) {
-        this.authorIds = authorIds;
     }
 }
