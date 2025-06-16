@@ -20,19 +20,19 @@ public class BookDto {
 	
 	@NotNull(message = "Publication year is mandatory")
     private Integer publicationYear;
-	
+
     private Set<AuthorDto> authors;
-    
+
     private Set<Integer> authorIds;
-    
+
     public BookDto() {}
-    
+
     public BookDto(Book entity) {
     	setIsbn(entity.getIsbn());
     	setTitle(entity.getTitle());
     	setCategory(entity.getCategory());
     	setPublicationYear(entity.getPublicationYear());
-    	setAuthors(entity.getAuthors().stream().map(x -> new AuthorDto(x)).collect(Collectors.toSet()));
+    	setAuthors(entity.getAuthors().stream().map(AuthorDto::new).collect(Collectors.toSet()));
     }
 
     public String getIsbn() {
@@ -81,14 +81,5 @@ public class BookDto {
 
     public void setAuthorIds(Set<Integer> authorIds) {
         this.authorIds = authorIds;
-    }
-    
-    public static Book getEntity(BookDto dto, boolean newEntity) {
-    	Book entity = new Book();
-    	entity.setIsbn(dto.getIsbn());
-    	entity.setTitle(dto.getTitle());
-    	entity.setCategory(dto.getCategory());
-    	entity.setPublicationYear(dto.getPublicationYear());
-    	return entity;
     }
 }

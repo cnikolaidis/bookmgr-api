@@ -1,10 +1,10 @@
 package com.iekakmi.bookmgr_api.business.services;
 
 import com.iekakmi.bookmgr_api.business.exceptions.BusinessLayerException;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.iekakmi.bookmgr_api.domain.repositories.*;
 import com.iekakmi.bookmgr_api.domain.entities.*;
 import com.iekakmi.bookmgr_api.business.dtos.*;
+import jakarta.validation.ConstraintViolation;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Validator;
@@ -13,37 +13,34 @@ import java.util.*;
 
 @Service
 public class BookService {
-	@Autowired
-	private BookRepository repository;
-	
-	@Autowired
-	private AuthorRepository authorRepository;
-	
-	@Autowired
-	private Validator validator;
-	
+	private final BookRepository repository;
+	private final AuthorRepository authorRepository;
+	private final Validator validator;
+
+	public BookService(BookRepository repository, AuthorRepository authorRepository, Validator validator) {
+		this.repository = repository;
+		this.authorRepository = authorRepository;
+		this.validator = validator;
+	}
+
 	public List<BookDto> getBooks() {
-		List<BookDto> dtos = StreamSupport
-				.stream(repository.findAll().spliterator(), false)
-				.map(x -> new BookDto(x))
-				.toList();
-		return dtos;
+        return repository.findAll().stream()
+                .map(BookDto::new)
+                .toList();
 	}
 	
 	public BookDto getBookByIsbn(String isbn) throws BusinessLayerException {
 		Book entity = repository
 				.findById(isbn)
 				.orElseThrow(() -> new BusinessLayerException(String.format("Book not found with ISBN: %s", isbn)));
-		BookDto dto = new BookDto(entity);
-		return dto;
+        return new BookDto(entity);
 	}
 	
 	public List<AuthorDto> getAuthorsByBookIsbn(String isbn) throws BusinessLayerException {
         Book entity = repository
         		.findById(isbn)
 				.orElseThrow(() -> new BusinessLayerException(String.format("Book not found with ISBN: %s", isbn)));
-        List<AuthorDto> authors = entity.getAuthors().stream().map(x -> new AuthorDto(x)).toList();
-        return authors;
+        return entity.getAuthors().stream().map(AuthorDto::new).toList();
     }
 	
 	@Transactional
@@ -62,7 +59,7 @@ public class BookService {
 				.findById(isbn)
 				.orElseThrow(() -> new BusinessLayerException(String.format("Book not found with ISBN: %s", isbn)));
 		List<String> attachedAuthors = entity.getAuthors().stream().map(b -> String.format("%d", b.getId())).toList();
-		if (attachedAuthors.size() > 0) {
+		if (!attachedAuthors.isEmpty()) {
 			throw new BusinessLayerException(String.format("Book with ISBN %s is set for Author id(s) [%s]", isbn, String.join(",", attachedAuthors)));
 		}
 		repository.deleteById(isbn);
@@ -88,8 +85,8 @@ public class BookService {
     }
 	
 	private BookDto saveBook(BookDto dto) throws BusinessLayerException {
-		List<String> validationErrors = validator.validate(dto).stream().map(x -> x.getMessage()).toList();
-		if (validationErrors.size() > 0) {
+		List<String> validationErrors = validator.validate(dto).stream().map(ConstraintViolation::getMessage).toList();
+		if (!validationErrors.isEmpty()) {
 			throw new BusinessLayerException(String.join(",", validationErrors));
 		}
 		Book dbEntity = repository.findById(dto.getIsbn()).orElse(new Book());
@@ -99,7 +96,7 @@ public class BookService {
 		dbEntity.setCategory(dto.getCategory());
 		Set<Author> authors = dto.getAuthorIds().stream()
 				.map(id -> authorRepository.findById(id).orElse(null))
-				.filter(author -> Objects.nonNull(author))
+				.filter(Objects::nonNull)
 				.collect(Collectors.toSet());
 		dbEntity.setAuthors(authors);
 		dbEntity = repository.save(dbEntity);

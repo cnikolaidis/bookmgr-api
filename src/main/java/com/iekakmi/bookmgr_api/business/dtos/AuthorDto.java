@@ -1,6 +1,7 @@
 package com.iekakmi.bookmgr_api.business.dtos;
 
 import com.iekakmi.bookmgr_api.domain.entities.Author;
+import com.iekakmi.bookmgr_api.domain.entities.Book;
 import jakarta.validation.constraints.*;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
@@ -18,17 +19,17 @@ public class AuthorDto {
 	
 	@Past(message = "Date of birth has to be a past date")
     private LocalDate dateOfBirth;
-	
+
     private Set<String> bookIsbns;
-    
+
     public AuthorDto() {}
-    
+
     public AuthorDto(Author entity) {
     	setId(entity.getId());
     	setName(entity.getName());
     	setNationality(entity.getNationality());
     	setDateOfBirth(entity.getDateOfBirth());
-    	setBookIsbns(entity.getBooks().stream().map(x -> x.getIsbn()).collect(Collectors.toSet()));
+    	setBookIsbns(entity.getBooks().stream().map(Book::getIsbn).collect(Collectors.toSet()));
     }
 
     public int getId() {
@@ -69,16 +70,5 @@ public class AuthorDto {
 
     public void setBookIsbns(Set<String> bookIsbns) {
         this.bookIsbns = bookIsbns;
-    }
-    
-    public static Author getEntity(AuthorDto dto, boolean newEntity) {
-    	Author entity = new Author();
-    	if (!newEntity) {
-    		entity.setId(dto.getId());
-    	}
-    	entity.setName(dto.getName());
-    	entity.setNationality(dto.getNationality());
-    	entity.setDateOfBirth(dto.getDateOfBirth());
-    	return entity;
     }
 }

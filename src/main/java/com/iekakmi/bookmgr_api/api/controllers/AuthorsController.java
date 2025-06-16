@@ -2,7 +2,6 @@ package com.iekakmi.bookmgr_api.api.controllers;
 
 import com.iekakmi.bookmgr_api.business.exceptions.BusinessLayerException;
 import com.iekakmi.bookmgr_api.business.services.AuthorService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.iekakmi.bookmgr_api.business.dtos.*;
@@ -11,9 +10,12 @@ import java.util.List;
 @RestController
 @RequestMapping("authors")
 public class AuthorsController {
-	@Autowired
-	private AuthorService svc;
-	
+	private final AuthorService svc;
+
+	public AuthorsController(AuthorService svc) {
+		this.svc = svc;
+	}
+
 	@GetMapping
 	public ResponseEntity<?> get() {
 		try {
