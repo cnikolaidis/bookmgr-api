@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.iekakmi.bookmgr_api.domain.entities.Book;
 import org.assertj.core.api.Assertions;
-import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 
@@ -16,7 +15,7 @@ public class DomainTests {
 	
 	@Test
 	void test_getAllBooks() {
-		List<Book> result = StreamSupport.stream(repo.findAll().spliterator(), false).toList();
+		List<Book> result = repo.findAll().stream().toList();
 		
 		Assertions.assertThat(result).isNotNull();
 	}
